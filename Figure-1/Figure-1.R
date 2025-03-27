@@ -6,16 +6,16 @@ laml=readRDS("../Mutations/laml.RDS")
 phosphoL6=readRDS("../Phosphoprotein/phosphoL6.RDS")
 
 ## Figure 1B
-mat=matrix(0,nrow=9,ncol=length(unique(clinical.all$Patint_ID)),dimnames = list(NULL,unique(clinical.all$Patint_ID)))
+mat=matrix(0,nrow=9,ncol=length(unique(clinical.all$Patient_ID)),dimnames = list(NULL,unique(clinical.all$Patient_ID)))
 mat[1,]=1
-mat[2,clinical.all$Patint_ID[match(laml@clinical.data$Tumor_Sample_Barcode,clinical.all$SampleID)]]=2
-mat[3,clinical.all$Patint_ID[match(laml@clinical.data$Tumor_Sample_Barcode,clinical.all$SampleID)]]=3
-mat[4,clinical.all$Patint_ID[match(colnames(WT.RNA.expr)[clinical.all$Tissue[match(colnames(WT.RNA.expr),clinical.all$SampleID)]=="T"],clinical.all$SampleID)]]=4
-mat[5,clinical.all$Patint_ID[match(colnames(WT.RNA.expr)[clinical.all$Tissue[match(colnames(WT.RNA.expr),clinical.all$SampleID)]=="N"],clinical.all$SampleID)]]=5
-mat[6,clinical.all$Patint_ID[match(colnames(WT.protein.expr)[clinical.all$Tissue[match(colnames(WT.protein.expr),clinical.all$SampleID)]=="T"],clinical.all$SampleID)]]=6
-mat[7,clinical.all$Patint_ID[match(colnames(WT.protein.expr)[clinical.all$Tissue[match(colnames(WT.protein.expr),clinical.all$SampleID)]=="N"],clinical.all$SampleID)]]=7
-mat[8,clinical.all$Patint_ID[match(colnames(phosphoL6)[clinical.all$Tissue[match(colnames(phosphoL6),clinical.all$SampleID)]=="T"],clinical.all$SampleID)]]=8
-mat[9,clinical.all$Patint_ID[match(colnames(phosphoL6)[clinical.all$Tissue[match(colnames(phosphoL6),clinical.all$SampleID)]=="N"],clinical.all$SampleID)]]=9
+mat[2,clinical.all$Patient_ID[match(laml@clinical.data$Tumor_Sample_Barcode,clinical.all$SampleID)]]=2
+mat[3,clinical.all$Patient_ID[match(laml@clinical.data$Tumor_Sample_Barcode,clinical.all$SampleID)]]=3
+mat[4,clinical.all$Patient_ID[match(colnames(WT.RNA.expr)[clinical.all$Tissue[match(colnames(WT.RNA.expr),clinical.all$SampleID)]=="T"],clinical.all$SampleID)]]=4
+mat[5,clinical.all$Patient_ID[match(colnames(WT.RNA.expr)[clinical.all$Tissue[match(colnames(WT.RNA.expr),clinical.all$SampleID)]=="N"],clinical.all$SampleID)]]=5
+mat[6,clinical.all$Patient_ID[match(colnames(WT.protein.expr)[clinical.all$Tissue[match(colnames(WT.protein.expr),clinical.all$SampleID)]=="T"],clinical.all$SampleID)]]=6
+mat[7,clinical.all$Patient_ID[match(colnames(WT.protein.expr)[clinical.all$Tissue[match(colnames(WT.protein.expr),clinical.all$SampleID)]=="N"],clinical.all$SampleID)]]=7
+mat[8,clinical.all$Patient_ID[match(colnames(phosphoL6)[clinical.all$Tissue[match(colnames(phosphoL6),clinical.all$SampleID)]=="T"],clinical.all$SampleID)]]=8
+mat[9,clinical.all$Patient_ID[match(colnames(phosphoL6)[clinical.all$Tissue[match(colnames(phosphoL6),clinical.all$SampleID)]=="N"],clinical.all$SampleID)]]=9
 
 mat1=mat[,order(mat[1,],mat[2,],mat[3,],mat[4,],mat[5,],mat[6,],mat[7,],mat[8,],mat[9,],decreasing = T)]
 df.mat=data.frame(omics=rep(c("Total","Genome-T","Genome-N","Transcriptome-T","Transcriptome-N",
@@ -24,8 +24,9 @@ df.mat=data.frame(omics=rep(c("Total","Genome-T","Genome-N","Transcriptome-T","T
 library(ggplot2);library(ggsci)
 df.mat$value1=as.character(df.mat$value)
 angles=seq(0,360,length.out=ncol(mat))
-df.mat$sample.name=paste("WT",sapply(match(df.mat$sample,colnames(mat1)),function(x){paste(c(rep(0,3-nchar(x)),x),collapse = "")}),sep="")
-clinical.all$publish.id=df.mat$sample.name[match(clinical.all$Patint_ID,df.mat$sample)]
+df.mat$sample.name=df.mat$sample
+#df.mat$sample.name=paste("WT",sapply(match(df.mat$sample,colnames(mat1)),function(x){paste(c(rep(0,3-nchar(x)),x),collapse = "")}),sep="")
+#clinical.all$publish.id=df.mat$sample.name[match(clinical.all$Patint_ID,df.mat$sample)]
 ggplot(df.mat, aes(x=sample.name, y=factor(omics,levels = unique(omics)), fill=value1)) +
   geom_tile(colour="white") +
   scale_fill_manual(labels=c("NA","Total","Exome (WT)","Exome (NAT)",
@@ -46,7 +47,7 @@ ggplot(df.mat, aes(x=sample.name, y=factor(omics,levels = unique(omics)), fill=v
 #### Figure 1B end
 
 #### Figure 1C
-vars=c("Patint_ID","Gender","Pre-treated_tumors_histology","Risk_group","Site","Pre-treated_(Chemotherapy)","Matastasis","Stage","fulstate")
+vars=c("Patient_ID","Gender","Pre-treated_tumors_histology","Risk_group","Site","Pre-treated_(Chemotherapy)","Matastasis","Stage","fulstate")
 patient.clinical=unique(as.matrix(clinical.all[clinical.all$Tissue=="T",..vars]))
 patient.clinical[is.na(patient.clinical)]="NA"
 patient.clinical[patient.clinical[,5]=="bilateral",5]="Bilateral"
