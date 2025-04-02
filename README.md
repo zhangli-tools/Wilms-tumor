@@ -1,2 +1,2 @@
 # Wilms-tumor
-Proteo-genomic analysis of Wlims tumor 
+Proteogenomic analysis of Wlims tumor 
